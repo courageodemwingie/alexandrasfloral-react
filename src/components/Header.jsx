@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
+import logo from '../assets/logo/alexandras_floral_logo.webp'
 import './Header.css'
 
 function Header() {
@@ -19,7 +20,7 @@ function Header() {
         onClick={closeMenu}
       >
         <img
-          src="/src/assets/logo/alexandras_floral_logo.webp"
+          src={logo}
           alt="Alexandra's Floral"
         />
       </Link>
