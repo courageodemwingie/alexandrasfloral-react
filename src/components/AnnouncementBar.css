@@ -1,0 +1,136 @@
+
+/* =================================
+   ANNOUNCEMENT BAR
+================================= */
+
+.announcement-bar {
+  width: 100%;
+  height: 38px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-burgundy, #6B1F32);
+  color: var(--color-gold, #C9A56A);
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  z-index: 110;
+}
+
+.announcement-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.announcement-track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.announcement-slide {
+  flex: 0 0 100vw;
+  width: 100vw;
+  min-width: 0;
+  min-height: 44px;
+  padding: 2px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+@keyframes announcement-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pause the ticker when hovered */
+.announcement-bar:hover .announcement-track {
+  animation-play-state: paused;
+}
+/* SEASONAL IMAGE */
+
+.announcement-image {
+  display: block;
+  width: 54px;
+  height: 54px;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  flex: 0 0 54px;
+  filter: drop-shadow(0 0 5px rgba(255, 235, 210, 0.45));
+}
+
+.announcement-message {
+  display: block;
+  color: var(--color-gold, #C9A56A);
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.045em;
+  text-align: center;
+}
+
+/* TABLET */
+.announcement-image {
+  width: 48px;
+  height: 48px;
+  flex-basis: 48px;
+}
+
+@media (max-width: 768px) {
+  .announcement-bar {
+    height: 36px;
+  }
+
+  .announcement-message {
+    font-size: 0.7rem;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .announcement-image {
+    width: 38px;
+    height: 38px;
+  }
+
+
+  .announcement-slide {
+    gap: 6px;
+  }
+
+ .announcement-image {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+
+  .announcement-message {
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-track {
+    transition: none;
+  }
+}
