@@ -1,8 +1,8 @@
-
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import html2canvas from 'html2canvas'
 import { useCart } from '../context/CartContext.jsx'
+import logo from '../assets/logo/alexandras_floral_logo.webp'
 import '../styles/checkout.css'
 
 function formatPrice(amount) {
@@ -22,10 +22,12 @@ function getSelectedVariation(item) {
 function getProductImage(item) {
   const variation = getSelectedVariation(item)
 
-  return variation?.image ||
+  return (
+    variation?.image ||
     item.product.image ||
     item.product.variations?.[0]?.image ||
     ''
+  )
 }
 
 function formatDeliveryDate(date) {
@@ -36,6 +38,14 @@ function formatDeliveryDate(date) {
     month: 'long',
     year: 'numeric',
   })
+}
+
+function CheckoutLogo() {
+  return (
+    <div className="checkout-brand-logo">
+      <img src={logo} alt="Alexandra's Floral" />
+    </div>
+  )
 }
 
 export default function Checkout() {
@@ -121,7 +131,9 @@ export default function Checkout() {
 
       await Promise.all(
         images.map(image => {
-          if (image.complete) return Promise.resolve()
+          if (image.complete && image.naturalWidth > 0) {
+            return Promise.resolve()
+          }
 
           return new Promise(resolve => {
             image.onload = resolve
@@ -154,66 +166,78 @@ export default function Checkout() {
     }
   }
 
+  // EMPTY CART
   if (cartItems.length === 0) {
     return (
       <main className="checkout-page">
-        <div className="checkout-empty">
-          <h1>Your cart is empty</h1>
-          <p>Add some beautiful flowers before proceeding to checkout.</p>
-          <Link to="/shop" className="checkout-primary-button">
-            Browse Flowers
-          </Link>
+        <div className="checkout-container">
+          <CheckoutLogo />
+
+          <div className="checkout-empty">
+            <h1>Your cart is empty</h1>
+            <p>Add some beautiful flowers before proceeding to checkout.</p>
+
+            <Link to="/shop" className="checkout-primary-button">
+              Browse Flowers
+            </Link>
+          </div>
         </div>
       </main>
     )
   }
 
+  // ORDER REQUEST READY
   if (order) {
     return (
       <main className="checkout-page">
         <div className="checkout-container">
-          <div className="checkout-heading">
-            <p className="checkout-eyebrow">ORDER REQUEST READY</p>
-            <h1>Your order summary is ready!</h1>
-            <p>
-              Download your order request image and send it to Alexandra's
-              Floral via WhatsApp for review and confirmation.
-            </p>
+          <div className="checkout-brand-heading">
+            <img
+              src={logo}
+              alt="Alexandra's Floral"
+              className="checkout-heading-logo"
+            />
+
+            <div className="checkout-heading">
+              <p className="checkout-eyebrow">ORDER REQUEST READY</p>
+              <h1>Your order summary is ready!</h1>
+            </div>
           </div>
+
+          <p className="checkout-heading-description">
+            Download your order request image and send it to Alexandra's
+            Floral via WhatsApp for review and confirmation.
+          </p>
 
           <div
             ref={orderDocumentRef}
             className="order-request-document"
           >
             <header className="order-document-header">
-              <h1>ALEXANDRA'S FLORAL</h1>
-              <p className="order-document-subtitle">ORDER REQUEST</p>
-              <p>Thank you for choosing us.</p>
+              <img
+                src={logo}
+                alt="Alexandra's Floral"
+                className="order-document-logo"
+              />
             </header>
 
             <div className="order-document-reference">
               <strong>Order reference: {order.reference}</strong>
             </div>
 
-            <section className="order-document-section">
+            <section className="order-document-section order-document-customer">
               <h2>Customer and Delivery Information</h2>
-
-              <p>
-                <strong>Customer name:</strong> {order.customer.name}
-              </p>
-
-              <p>
-                <strong>Receiver's phone:</strong> {order.customer.phone}
-              </p>
-
-              <p>
-                <strong>Delivery address:</strong> {order.customer.address}
-              </p>
-
-              <p>
-                <strong>Preferred delivery date:</strong>{' '}
-                {formatDeliveryDate(order.customer.deliveryDate)}
-              </p>
+              <div className="order-document-customer-grid">
+                <p><strong>Customer:</strong> {order.customer.name}</p>
+                <p><strong>Receiver's phone:</strong> {order.customer.phone}</p>
+                <p className="order-document-address">
+                  <strong>Delivery address:</strong> {order.customer.address}
+                </p>
+                <p>
+                  <strong>Delivery date:</strong>{' '}
+                  {formatDeliveryDate(order.customer.deliveryDate)}
+                </p>
+              </div>
             </section>
 
             <section className="order-document-section">
@@ -243,23 +267,12 @@ export default function Checkout() {
                       <div className="order-document-item-details">
                         <h3>{item.product.name}</h3>
 
-                        <p>
-                          <strong>Selected variation:</strong>{' '}
-                          {variation?.name || 'Standard'}
+                        <p className="order-document-variation">
+                          {variation?.name || 'Standard'} <span>·</span> Qty {item.quantity}
                         </p>
-
-                        <p>
-                          <strong>Quantity:</strong> {item.quantity}
-                        </p>
-
-                        <p>
-                          <strong>Unit price:</strong>{' '}
-                          {formatPrice(unitPrice)}
-                        </p>
-
-                        <p className="order-document-line-total">
-                          <strong>Item subtotal:</strong>{' '}
-                          {formatPrice(lineTotal)}
+                        <p className="order-document-prices">
+                          Unit {formatPrice(unitPrice)} <span>·</span>{' '}
+                          <strong>Subtotal {formatPrice(lineTotal)}</strong>
                         </p>
                       </div>
                     </article>
@@ -280,11 +293,6 @@ export default function Checkout() {
               Your final order total and payment instructions will be
               communicated directly to you.
             </div>
-
-            <footer className="order-document-footer">
-              Alexandra's Floral · Thank you for letting us be part of
-              your special moments.
-            </footer>
           </div>
 
           {error && (
@@ -319,18 +327,28 @@ export default function Checkout() {
     )
   }
 
+  // CHECKOUT FORM
   return (
     <main className="checkout-page">
       <div className="checkout-container">
-        <div className="checkout-heading">
-          <p className="checkout-eyebrow">ALMOST THERE</p>
-          <h1>Complete Your Order Request</h1>
-          <p>
-            Provide your details below to prepare your order request.
-            We'll confirm availability, delivery arrangements and final
-            pricing with you afterwards.
-          </p>
+        <div className="checkout-brand-heading">
+          <img
+            src={logo}
+            alt="Alexandra's Floral"
+            className="checkout-heading-logo"
+          />
+
+          <div className="checkout-heading">
+            <p className="checkout-eyebrow">ALMOST THERE</p>
+            <h1>Complete Your Order Request</h1>
+          </div>
         </div>
+
+        <p className="checkout-heading-description">
+          Provide your details below to prepare your order request.
+          We'll confirm availability, delivery arrangements and final
+          pricing with you afterwards.
+        </p>
 
         <div className="checkout-layout">
           <form className="checkout-form" onSubmit={handleSubmit}>
