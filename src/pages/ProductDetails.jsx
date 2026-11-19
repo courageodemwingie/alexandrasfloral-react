@@ -1,9 +1,23 @@
-
 import { useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { getCategoryBySlug, getProductBySlug } from '../data/products.js'
 import { useCart } from '../context/CartContext.jsx'
 import './ProductDetails.css'
+
+const GENERAL_ORDERS_WHATSAPP = '2349133502119'
+const FLORAL_ORDERS_WHATSAPP = '2348133695329'
+
+function getWhatsAppNumber(categoryName) {
+  const category = categoryName?.trim().toLowerCase()
+
+  if (
+    ['bouquets', 'flower arrangements', 'plants', 'wreaths'].includes(category)
+  ) {
+    return FLORAL_ORDERS_WHATSAPP
+  }
+
+  return GENERAL_ORDERS_WHATSAPP
+}
 
 function ProductDetails() {
   const { productSlug } = useParams()
@@ -11,7 +25,6 @@ function ProductDetails() {
   const { addToCart } = useCart()
 
   const product = getProductBySlug(productSlug)
-
   const variations = product?.variations || []
 
   const selectedVariation = useMemo(() => {
@@ -29,6 +42,8 @@ function ProductDetails() {
   const category = product
     ? getCategoryBySlug(product.category)
     : null
+
+  const whatsappNumber = getWhatsAppNumber(category?.name)
 
   const formatPrice = (price) =>
     new Intl.NumberFormat('en-NG', {
@@ -57,6 +72,17 @@ function ProductDetails() {
     )
 
     setAddedToCart(true)
+  }
+
+  const createWhatsAppUrl = () => {
+    const productUrl = `${window.location.origin}/product/${productSlug}?variation=${encodeURIComponent(selectedVariation.id)}`
+    const message = [
+      "Hello, I'd like to place an order.",
+      '',
+      productUrl,
+    ].join('\n')
+
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
   }
 
   if (!product) {
@@ -224,6 +250,42 @@ function ProductDetails() {
               Added to your cart successfully.
             </p>
           )}
+
+          <div
+            className="product-details-whatsapp"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr',
+              gap: '10px',
+              marginTop: '14px',
+            }}
+          >
+            <a
+              className="product-details-whatsapp-button"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                minHeight: '50px',
+                padding: '13px 18px',
+                borderRadius: '5px',
+                background: '#25D366',
+                color: '#ffffff',
+                fontFamily: 'inherit',
+                fontSize: '14px',
+                fontWeight: 600,
+                textAlign: 'center',
+                textDecoration: 'none',
+                boxSizing: 'border-box',
+              }}
+              href={createWhatsAppUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Order on WhatsApp
+            </a>
+          </div>
 
           <p className="product-details-note">
             Beautifully prepared with care by Alexandra's Floral.
