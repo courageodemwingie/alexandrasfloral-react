@@ -71,8 +71,10 @@ function Header() {
       >
         <Link to="/" onClick={closeMenu}>HOME</Link>
         <Link to="/shop" onClick={closeMenu}>SHOP</Link>
+        <Link to="/bridal-lookbook" onClick={closeMenu}>BRIDAL LOOKBOOK</Link>
         <Link to="/journal" onClick={closeMenu}>JOURNAL</Link>
         <Link to="/about" onClick={closeMenu}>ABOUT</Link>
+        <Link to="/faq" onClick={closeMenu}>FAQ</Link>
         <Link to="/contact" onClick={closeMenu}>CONTACT US</Link>
       </nav>
     </header>

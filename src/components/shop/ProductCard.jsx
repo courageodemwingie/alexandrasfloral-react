@@ -1,9 +1,8 @@
-
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './ProductCard.css'
 
-function ProductCard({ product }) {
+function ProductCard({ product, badgeLabel }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const variations = product.variations || []
@@ -43,11 +42,16 @@ function ProductCard({ product }) {
           </div>
         )}
 
-        {product.featured && (
+        {badgeLabel ? (
+          <span className="product-featured-label product-top-pick-label">
+            <span className="product-top-pick-icon" aria-hidden="true">✿</span>
+            <span>{badgeLabel}</span>
+          </span>
+        ) : product.featured ? (
           <span className="product-featured-label">
             Featured
           </span>
-        )}
+        ) : null}
       </Link>
 
       <div className="product-card-info">

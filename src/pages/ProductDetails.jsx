@@ -4,19 +4,17 @@ import { getCategoryBySlug, getProductBySlug } from '../data/products.js'
 import { useCart } from '../context/CartContext.jsx'
 import './ProductDetails.css'
 
-const GENERAL_ORDERS_WHATSAPP = '2349133502119'
-const FLORAL_ORDERS_WHATSAPP = '2348133695329'
+const BOUQUET_ORDERS_WHATSAPP = '2349133502119'
+const OTHER_ORDERS_WHATSAPP = '2348133695329'
 
 function getWhatsAppNumber(categoryName) {
   const category = categoryName?.trim().toLowerCase()
 
-  if (
-    ['bouquets', 'flower arrangements', 'plants', 'wreaths'].includes(category)
-  ) {
-    return FLORAL_ORDERS_WHATSAPP
+  if (category === 'bouquets') {
+    return BOUQUET_ORDERS_WHATSAPP
   }
 
-  return GENERAL_ORDERS_WHATSAPP
+  return OTHER_ORDERS_WHATSAPP
 }
 
 function ProductDetails() {

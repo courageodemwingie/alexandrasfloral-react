@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -6,8 +7,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alexandra's Floral | Beautiful Flowers & Floral Arrangements</title>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Pulse feedback widget -->
+    <script
+      src="https://www.pulseapp.click/widget.js"
+      data-key="pk_lseZrHAc_LQZqfSrVZGMJA1l"
+      data-label="Tell us what you think"
+      data-shape="pill"
+      data-color="#6B1F32"
+      data-position="right"
+      async
+    ></script>
+
+    <!-- Control Pulse visibility and mobile size -->
+    <script>
+      (() => {
+        let footerVisible = false;
+        let lastButton = null;
+
+        function findPulseButton() {
+          const elements = document.querySelectorAll('body *');
+
+          for (const element of elements) {
+            if (
+              element.children.length > 0 ||
+              !element.textContent?.trim().includes('Tell us what you think')
+            ) {
+              continue;
+            }
+
+            let target = element;
+
+            while (target && target !== document.body) {
+              if (getComputedStyle(target).position === 'fixed') {
+                return target;
+              }
+
+              target = target.parentElement;
+            }
+          }
+
+          return null;
+        }
+
+        function updatePulseVisibility() {
+          const button = findPulseButton();
+
+          if (!button) return;
+
+          lastButton = button;
+
+          const isMobile = window.matchMedia(
+            '(max-width: 600px)'
+          ).matches;
+
+          button.style.visibility = footerVisible ? 'visible' : 'hidden';
+          button.style.opacity = footerVisible ? '1' : '0';
+          button.style.pointerEvents = footerVisible ? 'auto' : 'none';
+          button.style.transform = isMobile ? 'scale(0.78)' : '';
+          button.style.transformOrigin = 'bottom right';
+        }
+
+        function observeFooter() {
+          const footer = document.querySelector('.site-footer');
+
+          if (!footer) {
+            requestAnimationFrame(observeFooter);
+            return;
+          }
+
+          const observer = new IntersectionObserver(
+            ([entry]) => {
+              footerVisible = entry.isIntersecting;
+              updatePulseVisibility();
+            },
+            { threshold: 0.01 }
+          );
+
+          observer.observe(footer);
+        }
+
+        const mutationObserver = new MutationObserver(
+          updatePulseVisibility
+        );
+
+        mutationObserver.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+        window.addEventListener('resize', updatePulseVisibility);
+
+        observeFooter();
+      })();
+    </script>
   </body>
 </html>

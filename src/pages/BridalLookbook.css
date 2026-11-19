@@ -1,0 +1,493 @@
+/* =========================================
+   ALEXANDRA'S FLORAL — BRIDAL LOOKBOOK
+========================================= */
+
+.bridal-lookbook-page {
+  --bridal-burgundy: #68152d;
+  --bridal-burgundy-dark: #510f23;
+  --bridal-cream: #fbf6f1;
+  --bridal-blush: #f1e2da;
+  --bridal-green: #66835f;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bridal-cream);
+  color: #292323;
+}
+
+.bridal-lookbook-page *,
+.bridal-lookbook-page *::before,
+.bridal-lookbook-page *::after {
+  box-sizing: border-box;
+}
+
+.bridal-lookbook-page button,
+.bridal-lookbook-page a {
+  font: inherit;
+}
+
+/* HERO */
+
+.bridal-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: stretch;
+  min-height: 470px;
+  background: #ead4c9;
+}
+
+.bridal-hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 70px clamp(28px, 7vw, 100px);
+}
+
+.bridal-eyebrow {
+  margin: 0 0 15px;
+  color: var(--bridal-green);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
+
+.bridal-hero-content .bridal-eyebrow {
+  color: var(--bridal-burgundy);
+}
+
+.bridal-hero h1 {
+  margin: 0;
+  color: var(--bridal-burgundy);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(42px, 5.2vw, 72px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 0.99;
+}
+
+.bridal-hero-description {
+  max-width: 470px;
+  margin: 22px 0 28px;
+  color: #453b38;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.bridal-primary-button,
+.bridal-enquiry-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 49px;
+  padding: 13px 24px;
+  border: 1px solid var(--bridal-burgundy);
+  border-radius: 5px;
+  background: var(--bridal-burgundy);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.bridal-primary-button:hover,
+.bridal-enquiry-button:hover {
+  transform: translateY(-2px);
+  background: var(--bridal-burgundy-dark);
+}
+
+.bridal-hero-image {
+  min-height: 470px;
+  overflow: hidden;
+}
+
+.bridal-hero-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 470px;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+/* SHARED SECTIONS */
+
+.bridal-section {
+  padding: 65px clamp(22px, 5vw, 72px) 70px;
+}
+
+.bridal-section-heading {
+  max-width: 760px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+
+.bridal-section-heading .bridal-eyebrow {
+  margin-bottom: 9px;
+}
+
+.bridal-section-heading h2,
+.bridal-enquiry h2 {
+  margin: 0;
+  color: var(--bridal-burgundy);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(31px, 3.6vw, 44px);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.bridal-section-heading > p:last-child {
+  margin: 10px 0 0;
+  color: #5d5350;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* BOUQUET GALLERY */
+
+.bridal-bouquet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.bridal-bouquet-card,
+.bridal-wedding-card,
+.bridal-inspiration-image {
+  display: block;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.bridal-bouquet-card {
+  border-radius: 12px;
+  background: #f0e3dc;
+}
+
+.bridal-bouquet-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.bridal-bouquet-card span {
+  display: block;
+  padding: 12px 8px 14px;
+  color: var(--bridal-burgundy);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  text-align: center;
+}
+
+.bridal-bouquet-card:hover img,
+.bridal-wedding-card:hover img,
+.bridal-inspiration-image:hover img {
+  transform: scale(1.035);
+}
+
+/* WEDDING FLORALS */
+
+.bridal-wedding-section {
+  background: #f5ebe5;
+}
+
+.bridal-wedding-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.bridal-wedding-card {
+  border-radius: 10px;
+  background: #eadbd3;
+}
+
+.bridal-wedding-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.25 / 1;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.bridal-wedding-card span {
+  display: block;
+  padding: 12px 8px;
+  color: #342625;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  text-align: center;
+}
+
+/* INSPIRATION */
+
+.bridal-inspiration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.bridal-inspiration-image {
+  border-radius: 12px;
+  background: var(--bridal-blush);
+}
+
+.bridal-inspiration-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.45 / 1;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+/* ENQUIRY BANNER */
+
+.bridal-enquiry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin: 0 clamp(18px, 3vw, 38px) 34px;
+  padding: 35px clamp(24px, 6vw, 80px);
+  border-radius: 18px;
+  background: var(--bridal-burgundy);
+  color: #fff;
+}
+
+.bridal-enquiry .bridal-eyebrow {
+  margin-bottom: 8px;
+  color: #e9c9b9;
+}
+
+.bridal-enquiry h2 {
+  color: #fff;
+}
+
+.bridal-enquiry > div > p:last-child {
+  max-width: 590px;
+  margin: 10px 0 0;
+  color: #f4e8e5;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.bridal-enquiry-button {
+  flex: 0 0 auto;
+  border-color: #f7e8df;
+  background: #f7e8df;
+  color: var(--bridal-burgundy);
+}
+
+.bridal-enquiry-button:hover {
+  border-color: #fff;
+  background: #fff;
+  color: var(--bridal-burgundy-dark);
+}
+
+/* IMAGE MODAL */
+
+.bridal-image-modal {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(24, 15, 17, 0.82);
+}
+
+.bridal-image-modal-content {
+  position: relative;
+  width: min(100%, 760px);
+  max-height: 90vh;
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--bridal-cream);
+  text-align: center;
+}
+
+.bridal-image-modal-content img {
+  display: block;
+  width: 100%;
+  max-height: 76vh;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.bridal-image-modal-content > p {
+  margin: 12px 0 2px;
+  color: var(--bridal-burgundy);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+}
+
+.bridal-modal-close {
+  position: absolute;
+  z-index: 1;
+  top: 22px;
+  right: 22px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--bridal-burgundy);
+  font-size: 27px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+  .bridal-hero {
+    grid-template-columns: 1fr 1fr;
+    min-height: 400px;
+  }
+
+  .bridal-hero-content {
+    padding: 48px 32px;
+  }
+
+  .bridal-hero-image,
+  .bridal-hero-image img {
+    min-height: 400px;
+  }
+
+  .bridal-bouquet-grid,
+  .bridal-wedding-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bridal-section {
+    padding-top: 52px;
+    padding-bottom: 56px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .bridal-hero {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bridal-hero-content {
+    order: 1;
+    padding: 42px 6% 34px;
+  }
+
+  .bridal-hero h1 {
+    font-size: clamp(42px, 11vw, 58px);
+  }
+
+  .bridal-hero-description {
+    margin: 17px 0 22px;
+    font-size: 14px;
+  }
+
+  .bridal-hero-image {
+    order: 2;
+    min-height: 0;
+    height: 330px;
+  }
+
+  .bridal-hero-image img {
+    min-height: 0;
+    height: 100%;
+    object-position: center 30%;
+  }
+
+  .bridal-section {
+    padding: 45px 5% 48px;
+  }
+
+  .bridal-section-heading {
+    margin-bottom: 22px;
+  }
+
+  .bridal-section-heading h2,
+  .bridal-enquiry h2 {
+    font-size: 32px;
+  }
+
+  .bridal-section-heading > p:last-child {
+    font-size: 13px;
+  }
+
+  .bridal-bouquet-grid,
+  .bridal-wedding-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+  }
+
+  .bridal-bouquet-card span,
+  .bridal-wedding-card span {
+    padding: 10px 6px;
+    font-size: 14px;
+  }
+
+  .bridal-inspiration-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .bridal-inspiration-image img {
+    aspect-ratio: 1.45 / 1;
+  }
+
+  .bridal-enquiry {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+    margin: 0 14px 22px;
+    padding: 28px 23px;
+    border-radius: 13px;
+  }
+
+  .bridal-enquiry-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .bridal-bouquet-grid,
+  .bridal-wedding-grid {
+    gap: 8px;
+  }
+
+  .bridal-bouquet-card span,
+  .bridal-wedding-card span {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridal-lookbook-page *,
+  .bridal-lookbook-page *::before,
+  .bridal-lookbook-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

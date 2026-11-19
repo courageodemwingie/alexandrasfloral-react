@@ -126,7 +126,7 @@ export const products = [
 
   // Gifts - 6 products
   ...Array.from({ length: 6 }, (_, index) =>
-    createProduct('gift', index + 1, index + 4)
+    createProduct('gift', index + 1, index + 4, index === 0)
   ),
 ]
 
