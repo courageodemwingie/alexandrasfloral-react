@@ -41,11 +41,12 @@ function isValidSessionToken(token) {
   );
 }
 
+
 function createSessionCookie(token, cookieName, isLocal) {
   const attributes = [
     `${cookieName}=${token}`,
     'HttpOnly',
-    'SameSite=Lax',
+    isLocal ? 'SameSite=Lax' : 'SameSite=None',
     'Path=/',
     `Max-Age=${SESSION_DURATION_HOURS * 60 * 60}`,
   ];
@@ -57,11 +58,13 @@ function createSessionCookie(token, cookieName, isLocal) {
   return attributes.join('; ');
 }
 
+
+
 function clearSessionCookie(cookieName, isLocal) {
   const attributes = [
     `${cookieName}=`,
     'HttpOnly',
-    'SameSite=Lax',
+    isLocal ? 'SameSite=Lax' : 'SameSite=None',
     'Path=/',
     'Max-Age=0',
   ];
