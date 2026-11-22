@@ -18,6 +18,7 @@ coverage/
 .env
 .env.*
 !.env.example
+worker/.dev.vars
 
 # Local files
 *.local
@@ -32,3 +33,12 @@ coverage/
 *.njsproj
 *.sln
 *.sw?
+
+# Cloudflare local development files
+worker/.wrangler/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+worker/.dev.vars
