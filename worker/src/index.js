@@ -4,6 +4,8 @@ import {
   loginAdmin,
   getAuthenticatedAdmin,
   logoutAdmin,
+  requestPasswordReset,
+  resetAdminPassword,
 } from './auth.js';
 
 import {
@@ -25,6 +27,45 @@ import {
 } from './admin-products.js';
 import { uploadAdminImage } from './admin-uploads.js';
 
+async function sendPasswordResetEmail(email, resetUrl, env) {
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: "Alexandra's Floral <no-reply@mail.alexandrasfloral.com>",
+      to: [email],
+      subject: "Reset your Alexandra's Floral admin password",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 560px; margin: auto; color: #333;">
+          <h2>Password reset request</h2>
+          <p>We received a request to reset your Alexandra's Floral admin password.</p>
+          <p>Click the button below to choose a new password. This link expires in 30 minutes.</p>
+          <p style="margin: 30px 0;">
+            <a href="${resetUrl}"
+               style="background: #6b1f35; color: white; padding: 14px 24px; text-decoration: none; border-radius: 5px;">
+              Reset my password
+            </a>
+          </p>
+          <p>If you did not request this change, you can safely ignore this email.</p>
+          <p>Alexandra's Floral</p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error('Password reset email delivery failed:', error);
+    throw new Error('Unable to send password reset email.');
+  }
+
+  return true;
+}
+
+
 const PRODUCTION_ORIGINS = new Set([
   'https://alexandrasfloral.com',
   'https://www.alexandrasfloral.com',
@@ -34,6 +75,8 @@ const PRODUCTION_ORIGINS = new Set([
 const LOCAL_ORIGINS = new Set([
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'http://localhost:4173',
+  'http://127.0.0.1:4173',
 ]);
 
 const UNSAFE_METHODS = new Set([
@@ -461,6 +504,211 @@ export default {
           {
             'Set-Cookie': result.cookie,
           }
+        );
+      }
+
+      // Request admin password reset.
+      if (
+        url.pathname === '/api/auth/forgot-password' &&
+        request.method === 'POST'
+      ) {
+        const parsed = await readJsonBody(request);
+
+        if (!parsed.success) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'If an eligible account exists, a reset link will be sent.',
+            },
+            200,
+            origin
+          );
+        }
+
+        const { email } = parsed.body;
+
+        if (
+          typeof email !== 'string' ||
+          !email.trim() ||
+          email.length > 255
+        ) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'Please enter a valid email address.',
+            },
+            400,
+            origin
+          );
+        }
+
+        const clientIp = getClientIp(request, localRequest);
+
+        if (!clientIp) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'Unable to process this request.',
+            },
+            503,
+            origin
+          );
+        }
+
+        const ipRateLimit = await env.LOGIN_IP_LIMITER.limit({
+          key: `password-reset:${clientIp}`,
+        });
+
+        if (!ipRateLimit.success) {
+          return jsonResponse(
+            {
+              success: true,
+              message: 'If an eligible account exists, a reset link will be sent.',
+            },
+            200,
+            origin
+          );
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+
+        const emailRateLimit = await env.LOGIN_LIMITER.limit({
+          key: `password-reset:${normalizedEmail}`,
+        });
+
+        if (!emailRateLimit.success) {
+          return jsonResponse(
+            {
+              success: true,
+              message: 'If an eligible account exists, a reset link will be sent.',
+            },
+            200,
+            origin
+          );
+        }
+
+        const result = await withDatabase(env, (client) =>
+          requestPasswordReset(client, normalizedEmail)
+        );
+
+        if (result.resetToken) {
+          const frontendOrigin = origin;
+
+          const resetUrl = new URL(
+            '/admin/reset-password',
+            frontendOrigin
+          );
+
+          resetUrl.searchParams.set('token', result.resetToken);
+
+          await sendPasswordResetEmail(
+            result.email,
+            resetUrl.toString(),
+            env
+          );
+        }
+
+        return jsonResponse(
+          {
+            success: true,
+            message: 'If an eligible account exists, a reset link will be sent.',
+          },
+          200,
+          origin
+        );
+      }
+
+      // Complete admin password reset.
+      if (
+        url.pathname === '/api/auth/reset-password' &&
+        request.method === 'POST'
+      ) {
+        const parsed = await readJsonBody(request);
+
+        if (!parsed.success) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'Invalid password reset request.',
+            },
+            400,
+            origin
+          );
+        }
+
+        const { token, password } = parsed.body;
+
+        if (
+          typeof token !== 'string' ||
+          typeof password !== 'string' ||
+          token.length !== 43 ||
+          !/^[A-Za-z0-9_-]+$/.test(token) ||
+          password.length < 12 ||
+          password.length > 1024
+        ) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'Enter a valid reset link and a password of at least 12 characters.',
+            },
+            400,
+            origin
+          );
+        }
+
+        const clientIp = getClientIp(request, localRequest);
+
+        if (!clientIp) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'Unable to process this request.',
+            },
+            503,
+            origin
+          );
+        }
+
+        const rateLimit = await env.LOGIN_IP_LIMITER.limit({
+          key: `password-reset-complete:${clientIp}`,
+        });
+
+        if (!rateLimit.success) {
+          return jsonResponse(
+            {
+              success: false,
+              message: 'Too many password reset attempts. Please try again in a minute.',
+            },
+            429,
+            origin,
+            {
+              'Retry-After': '60',
+            }
+          );
+        }
+
+        const result = await withDatabase(env, (client) =>
+          resetAdminPassword(client, token, password)
+        );
+
+        if (!result.success) {
+          return jsonResponse(
+            {
+              success: false,
+              message: result.message,
+            },
+            400,
+            origin
+          );
+        }
+
+        return jsonResponse(
+          {
+            success: true,
+            message: 'Your password has been reset. Please sign in with your new password.',
+          },
+          200,
+          origin
         );
       }
 

@@ -168,3 +168,45 @@
     font-size: 24px;
   }
 }
+
+/* Forgot password link */
+.admin-forgot-password {
+  display: block;
+  margin-top: -12px;
+  margin-bottom: 22px;
+  color: #762d45;
+  font-size: 12px;
+  text-align: right;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.admin-forgot-password:hover {
+  color: #4e1728;
+  text-decoration: underline;
+}
+
+/* Password reset success message */
+.admin-login-success {
+  margin: 28px 0;
+  padding: 20px;
+  border: 1px solid #eee5e1;
+  border-radius: 4px;
+  background: #f8f5f1;
+  text-align: center;
+}
+
+.admin-login-success h2 {
+  margin: 0 0 12px;
+  color: #681f35;
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.admin-login-success p {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.7;
+}

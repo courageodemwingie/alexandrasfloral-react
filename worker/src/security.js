@@ -8,10 +8,10 @@ function toBase64Url(bytes) {
     binary += String.fromCharCode(byte);
   }
 
-return btoa(binary)
-  .replace(/\+/g, '-')
-  .replace(/\//g, '_')
-  .replace(/=+$/g, '');
+  return btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
 }
 
 function fromBase64Url(value) {
@@ -23,7 +23,10 @@ function fromBase64Url(value) {
     base64 + '='.repeat((4 - base64.length % 4) % 4)
   );
 
-  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return Uint8Array.from(
+    binary,
+    (char) => char.charCodeAt(0)
+  );
 }
 
 export async function hashPassword(password) {
@@ -129,4 +132,14 @@ export async function hashSessionToken(token) {
   );
 
   return toBase64Url(new Uint8Array(digest));
+}
+
+// Password-reset tokens use the same secure random generator.
+// Only their SHA-256 hashes should be stored in Neon.
+export function generatePasswordResetToken() {
+  return generateSessionToken();
+}
+
+export async function hashPasswordResetToken(token) {
+  return hashSessionToken(token);
 }

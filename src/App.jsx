@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import AnnouncementBar from "./components/AnnouncementBar.jsx";
@@ -13,18 +14,23 @@ import Checkout from "./pages/Checkout.jsx";
 import BridalLookbook from "./pages/BridalLookbook.jsx";
 import FAQ from "./pages/FAQ.jsx";
 
+// Admin pages
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
+import AdminForgotPassword from "./pages/admin/AdminForgotPassword.jsx";
+import AdminResetPassword from "./pages/admin/AdminResetPassword.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminProducts from "./pages/admin/AdminProducts.jsx";
 import AdminProductForm from "./pages/admin/AdminProductForm.jsx";
 
+// Admin authentication and context
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { AdminAuthProvider } from "./context/AdminAuthContext.jsx";
 
 function AppLayout() {
   const location = useLocation();
+
   const isCheckoutPage = location.pathname === "/checkout";
   const isAdminPage = location.pathname.startsWith("/admin");
 
@@ -48,8 +54,16 @@ function AppLayout() {
         <Route path="/bridal-lookbook" element={<BridalLookbook />} />
         <Route path="/faq" element={<FAQ />} />
 
-        {/* Admin login */}
+        {/* Admin authentication */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/forgot-password"
+          element={<AdminForgotPassword />}
+        />
+        <Route
+          path="/admin/reset-password"
+          element={<AdminResetPassword />}
+        />
 
         {/* Protected admin pages */}
         <Route element={<AdminProtectedRoute />}>
@@ -57,7 +71,10 @@ function AppLayout() {
             <Route index element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
             <Route path="products/new" element={<AdminProductForm />} />
-            <Route path="products/:productId" element={<AdminProductForm />} />
+            <Route
+              path="products/:productId"
+              element={<AdminProductForm />}
+            />
           </Route>
         </Route>
       </Routes>

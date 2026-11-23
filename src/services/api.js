@@ -33,6 +33,19 @@ export const adminLogout = () =>
 export const getAdminSession = () =>
   request('/api/auth/me')
 
+
+export const requestAdminPasswordReset = (email) =>
+  request('/api/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  })
+
+export const resetAdminPassword = (token, password) =>
+  request('/api/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, password }),
+  })
+
 // Admin products
 export const getAdminProducts = (params = {}) => {
   const query = new URLSearchParams(params).toString()
