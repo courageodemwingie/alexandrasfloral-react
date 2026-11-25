@@ -277,3 +277,116 @@
     padding: 13px 12px;
   }
 }
+
+.admin-product-thumbnail {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f5f1ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 11px;
+}
+
+.admin-product-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-products-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 4px;
+  color: #77716f;
+  font-size: 13px;
+}
+
+.admin-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-pagination-controls button {
+  padding: 9px 14px;
+  border: 1px solid #e5dfdc;
+  border-radius: 5px;
+  background: #fff;
+  color: #4b343b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-pagination-controls button:hover:not(:disabled) {
+  background: #f7f2f0;
+}
+
+.admin-pagination-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-pagination-controls span {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .admin-products-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-pagination-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+.admin-product-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-product-publish-button,
+.admin-product-unpublish-button {
+  border: 1px solid #e5dfdc;
+  border-radius: 5px;
+  padding: 7px 11px;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.admin-product-publish-button {
+  color: #426b4c;
+  border-color: #cbdccf;
+}
+
+.admin-product-unpublish-button {
+  color: #87505b;
+  border-color: #e5cbd1;
+}
+
+.admin-product-publish-button:hover:not(:disabled) {
+  background: #edf5ee;
+}
+
+.admin-product-unpublish-button:hover:not(:disabled) {
+  background: #f8edef;
+}
+
+.admin-product-publish-button:disabled,
+.admin-product-unpublish-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

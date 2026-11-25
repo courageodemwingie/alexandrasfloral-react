@@ -33,7 +33,6 @@ export const adminLogout = () =>
 export const getAdminSession = () =>
   request('/api/auth/me')
 
-
 export const requestAdminPasswordReset = (email) =>
   request('/api/auth/forgot-password', {
     method: 'POST',
@@ -72,7 +71,13 @@ export const getAdminOrders = (params = {}) => {
   const query = new URLSearchParams(params).toString()
   return request(`/api/admin/orders${query ? `?${query}` : ''}`)
 }
-
+// Create a new official order
+export const createAdminOrder = (orderData) =>
+  request('/api/admin/orders', {
+    method: 'POST',
+    body: JSON.stringify(orderData),
+  })
+  
 export const getAdminOrder = (id) =>
   request(`/api/admin/orders/${encodeURIComponent(id)}`)
 
@@ -82,7 +87,21 @@ export const updateAdminOrder = (id, updates) =>
     body: JSON.stringify(updates),
   })
 
-  // Admin image uploads
+// Record an additional payment against an order
+export const recordAdminOrderPayment = (orderId, paymentData) =>
+  request(`/api/admin/orders/${encodeURIComponent(orderId)}/payments`, {
+    method: 'POST',
+    body: JSON.stringify(paymentData),
+  })
+
+// Record a full refund against an order
+export const refundAdminOrder = (orderId, refundData) =>
+  request(`/api/admin/orders/${encodeURIComponent(orderId)}/refund`, {
+    method: 'POST',
+    body: JSON.stringify(refundData),
+  })
+
+// Admin image uploads
 export async function uploadAdminImage(file) {
   const formData = new FormData()
   formData.append('file', file)
@@ -106,3 +125,22 @@ export async function uploadAdminImage(file) {
 
   return data
 }
+
+export function getProductImageUrl(imageKey) {
+  if (!imageKey) return ''
+
+  return `${API_BASE_URL}/api/images?key=${encodeURIComponent(imageKey)}`
+}
+
+// Public shop catalogue
+export const getPublicCategories = () =>
+  request('/api/categories')
+
+export const getPublicProducts = (params = {}) => {
+  const query = new URLSearchParams(params).toString()
+
+  return request(`/api/products${query ? `?${query}` : ''}`)
+}
+
+export const getPublicProduct = (slug) =>
+  request(`/api/products/${encodeURIComponent(slug)}`)

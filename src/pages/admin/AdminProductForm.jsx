@@ -5,7 +5,8 @@ import {
   getAdminProduct,
   updateAdminProduct,
   uploadAdminImage,
-} from "../../services/api.js";
+  getProductImageUrl,
+} from "../../services/api";
 import "./AdminProductForm.css";
 
 const CATEGORIES = [
@@ -46,7 +47,7 @@ const initialForm = () => ({
   options: [],
 });
 
-function ImageUploadField({ label, imageKey, onUploaded }) {
+function ImageUploadField({ label, imageKey, onUploaded, onRemove }) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState("");
   const [uploadError, setUploadError] = useState("");
@@ -85,6 +86,14 @@ function ImageUploadField({ label, imageKey, onUploaded }) {
     }
   }
 
+  function handleRemove() {
+    setPreview("");
+    setUploadError("");
+    onRemove();
+  }
+
+  const imageUrl = preview || (imageKey ? getProductImageUrl(imageKey) : "");
+
   return (
     <div className="admin-form-field admin-image-upload">
       <span>{label}</span>
@@ -96,9 +105,9 @@ function ImageUploadField({ label, imageKey, onUploaded }) {
         disabled={uploading}
       />
 
-      {preview && (
+      {imageUrl && (
         <img
-          src={preview}
+          src={imageUrl}
           alt={`${label} preview`}
           className="admin-image-preview"
         />
@@ -108,10 +117,18 @@ function ImageUploadField({ label, imageKey, onUploaded }) {
 
       {imageKey && !uploading && (
         <small className="admin-image-upload-success">
-          <span>Image uploaded successfully.</span>
-          <br />
-          Image key: {imageKey}
+          Image saved successfully.
         </small>
+      )}
+
+      {imageKey && !uploading && (
+        <button
+          type="button"
+          className="admin-image-remove-button"
+          onClick={handleRemove}
+        >
+          Remove image
+        </button>
       )}
 
       {uploadError && (
@@ -295,10 +312,12 @@ export default function AdminProductForm() {
     }));
   }
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event, statusOverride = null) {
     event.preventDefault();
     setError("");
     setSuccess("");
+
+    const publicationStatus = statusOverride || form.publicationStatus;
 
     if (!form.name.trim()) {
       setError("Please enter a product name.");
@@ -310,7 +329,7 @@ export default function AdminProductForm() {
       return;
     }
 
-    if (form.publicationStatus === "published") {
+    if (publicationStatus === "published") {
       if (!form.hasVariablePricing && form.basePrice === "") {
         setError("Enter a base price before publishing this product.");
         return;
@@ -327,11 +346,12 @@ export default function AdminProductForm() {
 
     const payload = {
       ...form,
+      publicationStatus,
       basePrice: form.basePrice === "" ? null : form.basePrice,
       sortOrder: Number(form.sortOrder) || 0,
       variations: form.variations.map((variation, index) => ({
         ...variation,
-        price: variation.price,
+        price: form.hasVariablePricing ? variation.price : form.basePrice,
         sortOrder: Number(variation.sortOrder ?? index),
       })),
       options: form.options.map((option, index) => ({
@@ -349,10 +369,18 @@ export default function AdminProductForm() {
     try {
       if (isEditing) {
         await updateAdminProduct(productId, payload);
-        setSuccess("Product updated successfully.");
+        setSuccess(
+          publicationStatus === "draft"
+            ? "Product saved as draft."
+            : "Product updated successfully.",
+        );
       } else {
         await createAdminProduct(payload);
-        setSuccess("Product created successfully.");
+        setSuccess(
+          publicationStatus === "draft"
+            ? "Product saved as draft."
+            : "Product created successfully.",
+        );
       }
 
       navigate("/admin/products");
@@ -456,13 +484,13 @@ export default function AdminProductForm() {
         <section className="admin-form-section">
           <div className="admin-form-section-heading">
             <h2>Product image</h2>
-            <p>Image upload will be connected to Cloudflare R2 next.</p>
+            <p>Upload and manage your product images.</p>
           </div>
-          Main image key
           <ImageUploadField
             label="Main product image"
             imageKey={form.mainImageKey}
             onUploaded={(key) => updateField("mainImageKey", key)}
+            onRemove={() => updateField("mainImageKey", "")}
           />
         </section>
 
@@ -498,6 +526,7 @@ export default function AdminProductForm() {
               value={form.basePrice}
               onChange={(e) => updateField("basePrice", e.target.value)}
               placeholder="e.g. 25000"
+              required={!form.hasVariablePricing}
             />
             <small>
               Used for every variation when Variation Prices is switched off.
@@ -555,24 +584,36 @@ export default function AdminProductForm() {
                   />
                 </label>
 
-                <label className="admin-form-field">
-                  Variation price (₦)
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={variation.price}
-                    onChange={(e) =>
-                      updateVariation(index, "price", e.target.value)
-                    }
-                    required
-                  />
-                </label>
+                {form.hasVariablePricing ? (
+                  <label className="admin-form-field">
+                    Variation price (₦) *
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={variation.price}
+                      onChange={(e) =>
+                        updateVariation(index, "price", e.target.value)
+                      }
+                      placeholder="Enter variation price"
+                      required
+                    />
+                  </label>
+                ) : (
+                  <div className="admin-form-field">
+                    <span>Variation price</span>
+                    <p className="admin-form-hint">
+                      Uses the product base price: ₦
+                      {Number(form.basePrice || 0).toLocaleString("en-NG")}
+                    </p>
+                  </div>
+                )}
 
                 <ImageUploadField
                   label="Variation image"
                   imageKey={variation.imageKey}
                   onUploaded={(key) => updateVariation(index, "imageKey", key)}
+                  onRemove={() => updateVariation(index, "imageKey", "")}
                 />
               </div>
 
@@ -665,12 +706,15 @@ export default function AdminProductForm() {
                     required
                   />
                   <ImageUploadField
-  label="Option image"
-  imageKey={value.imageKey}
-  onUploaded={(key) =>
-    updateOptionValue(optionIndex, valueIndex, "imageKey", key)
-  }
-/>
+                    label="Option image"
+                    imageKey={value.imageKey}
+                    onUploaded={(key) =>
+                      updateOptionValue(optionIndex, valueIndex, "imageKey", key)
+                    }
+                    onRemove={() =>
+                      updateOptionValue(optionIndex, valueIndex, "imageKey", "")
+                    }
+                  />
                   <button
                     type="button"
                     className="admin-remove-button"
@@ -678,6 +722,21 @@ export default function AdminProductForm() {
                   >
                     Remove
                   </button>
+                  <label className="admin-inline-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={value.isActive}
+                      onChange={(e) =>
+                        updateOptionValue(
+                          optionIndex,
+                          valueIndex,
+                          "isActive",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                    Active
+                  </label>
                 </div>
               ))}
 
@@ -736,12 +795,13 @@ export default function AdminProductForm() {
           <Link to="/admin/products" className="admin-secondary-button">
             Cancel
           </Link>
+
           <button
             type="submit"
             className="admin-primary-button"
             disabled={saving}
           >
-            {saving ? "Saving..." : isEditing ? "Save changes" : "Save product"}
+            {saving ? "Saving..." : isEditing ? "Save Changes" : "Save Product"}
           </button>
         </div>
       </form>

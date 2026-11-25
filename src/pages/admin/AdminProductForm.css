@@ -330,3 +330,28 @@
 .admin-image-upload-error {
   color: #b42318;
 }
+
+
+
+
+@media (max-width: 600px) {
+  .admin-form-actions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+}
+.admin-image-remove-button {
+  align-self: flex-start;
+  padding: 7px 12px;
+  border: 1px solid #b85c65;
+  border-radius: 5px;
+  background: transparent;
+  color: #b85c65;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.admin-image-remove-button:hover {
+  background: #f8e9eb;
+}

@@ -1,20 +1,64 @@
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { categories, products } from '../data/products.js'
+import {
+  getPublicCategories,
+  getPublicProducts,
+} from '../services/api.js'
 import ProductCard from '../components/shop/ProductCard.jsx'
 import '../styles/shop.css'
 
 function Shop() {
   const [search, setSearch] = useState('')
+  const [categories, setCategories] = useState([])
+  const [products, setProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadCatalogue() {
+      try {
+        setIsLoading(true)
+        setError('')
+
+        const [categoriesData, productsData] = await Promise.all([
+          getPublicCategories(),
+          getPublicProducts(),
+        ])
+
+        if (!isMounted) return
+
+        setCategories(categoriesData.categories || [])
+        setProducts(productsData.products || [])
+      } catch (err) {
+        if (!isMounted) return
+        setError(err.message || 'Unable to load our collection.')
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadCatalogue()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) =>
-      product.name.toLowerCase().includes(search.toLowerCase())
-    )
-  }, [search])
+    const searchTerm = search.trim().toLowerCase()
 
-  // Divide the catalogue into separate groups of six.
+    if (!searchTerm) return products
+
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm)
+    )
+  }, [products, search])
+
   const productRows = useMemo(() => {
     const rows = []
 
@@ -62,13 +106,27 @@ function Shop() {
             <h2>Our arrangements</h2>
           </div>
 
-          <span>
-            {filteredProducts.length}{' '}
-            {filteredProducts.length === 1 ? 'product' : 'products'}
-          </span>
+          {!isLoading && !error && (
+            <span>
+              {filteredProducts.length}{' '}
+              {filteredProducts.length === 1 ? 'product' : 'products'}
+            </span>
+          )}
         </div>
 
-        {filteredProducts.length > 0 ? (
+        {isLoading ? (
+          <div className="shop-empty-state">
+            <p>Loading our collection...</p>
+          </div>
+        ) : error ? (
+          <div className="shop-empty-state">
+            <h3>Unable to load our collection</h3>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>
+              Try again
+            </button>
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="shop-product-rows">
             {productRows.map((row, index) => (
               <div className="shop-product-row" key={index}>

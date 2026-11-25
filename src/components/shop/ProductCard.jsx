@@ -1,21 +1,26 @@
-import { useState } from 'react'
+
 import { Link } from 'react-router-dom'
+import { getProductImageUrl } from '../../services/api.js'
 import './ProductCard.css'
 
 function ProductCard({ product, badgeLabel }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
   const variations = product.variations || []
   const firstVariation = variations[0]
+  const hasVariablePricing = product.has_variable_pricing === true
 
   const formatPrice = (price) =>
     new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN',
       maximumFractionDigits: 0,
-    }).format(price)
+    }).format(Number(price) || 0)
 
-  const prices = variations.map((variation) => variation.price)
+  const prices = hasVariablePricing
+    ? variations
+        .map((variation) => Number(variation.price))
+        .filter(Number.isFinite)
+    : [Number(product.base_price)].filter(Number.isFinite)
+
   const lowestPrice = prices.length ? Math.min(...prices) : 0
   const highestPrice = prices.length ? Math.max(...prices) : 0
 
@@ -24,15 +29,20 @@ function ProductCard({ product, badgeLabel }) {
       ? formatPrice(lowestPrice)
       : `From ${formatPrice(lowestPrice)}`
 
+  const mainImageKey =
+    product.main_image_key || firstVariation?.image_key
+
+  const mainImageUrl = getProductImageUrl(mainImageKey)
+
   return (
     <article className="product-card">
       <Link
         to={`/product/${product.slug}`}
         className="product-card-image"
       >
-        {firstVariation?.image ? (
+        {mainImageUrl ? (
           <img
-            src={firstVariation.image}
+            src={mainImageUrl}
             alt={product.name}
             loading="lazy"
           />
@@ -44,7 +54,9 @@ function ProductCard({ product, badgeLabel }) {
 
         {badgeLabel ? (
           <span className="product-featured-label product-top-pick-label">
-            <span className="product-top-pick-icon" aria-hidden="true">✿</span>
+            <span className="product-top-pick-icon" aria-hidden="true">
+              ✿
+            </span>
             <span>{badgeLabel}</span>
           </span>
         ) : product.featured ? (
@@ -67,65 +79,13 @@ function ProductCard({ product, badgeLabel }) {
           </p>
         </div>
 
-        <button
-          type="button"
+        <Link
+          to={`/product/${product.slug}`}
           className="product-variation-toggle"
-          onClick={() => setIsExpanded((current) => !current)}
-          aria-expanded={isExpanded}
         >
-          Variations ({variations.length})
-        </button>
+          Explore options <span aria-hidden="true">→</span>
+        </Link>
       </div>
-
-      {isExpanded && (
-        <div
-          className="product-variation-backdrop"
-          onClick={() => setIsExpanded(false)}
-        >
-          <div
-            className="product-variation-overlay"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="product-variation-overlay-heading">
-              <span>Choose a variation</span>
-
-              <button
-                type="button"
-                onClick={() => setIsExpanded(false)}
-                aria-label="Close variations"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="product-variations-scroll">
-              {variations.map((variation) => (
-                <Link
-                  key={variation.id}
-                  to={`/product/${product.slug}?variation=${variation.id}`}
-                  className="product-variation-option"
-                >
-                  <div className="product-variation-image">
-                    <img
-                      src={variation.image}
-                      alt={variation.name}
-                      loading="lazy"
-                    />
-                  </div>
-
-                  <span className="product-variation-name">
-                    {variation.name}
-                  </span>
-
-                  <span className="product-variation-price">
-                    {formatPrice(variation.price)}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </article>
   )
 }

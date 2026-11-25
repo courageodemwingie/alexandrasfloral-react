@@ -19,7 +19,7 @@ function isValidId(value) {
 function parseMoneyToKobo(value) {
   const amount = String(value);
 
-  if (!/^\d+(\.\d{1,2})?$/.test(amount)) {
+  if (!/^\d+(?:\.\d{1,2})?$/.test(amount)) {
     throw new ValidationError('Invalid product price.');
   }
 
@@ -37,29 +37,20 @@ function parseMoneyToKobo(value) {
 function formatKobo(amount) {
   const whole = amount / 100n;
   const fraction = String(amount % 100n).padStart(2, '0');
-
   return `${whole}.${fraction}`;
 }
 
-async function validateSelectedOptions(
-  client,
-  productId,
-  selectedOptions
-) {
+async function validateSelectedOptions(client, productId, selectedOptions) {
   if (selectedOptions === undefined || selectedOptions === null) {
     return [];
   }
 
   if (!Array.isArray(selectedOptions)) {
-    throw new ValidationError(
-      'Invalid product customisation selections.'
-    );
+    throw new ValidationError('Invalid product customisation selections.');
   }
 
   if (selectedOptions.length > 20) {
-    throw new ValidationError(
-      'Too many product customisation selections.'
-    );
+    throw new ValidationError('Too many product customisation selections.');
   }
 
   const seenOptions = new Set();
@@ -69,9 +60,7 @@ async function validateSelectedOptions(
     const { optionId, valueId } = selection || {};
 
     if (!isValidId(optionId) || !isValidId(valueId)) {
-      throw new ValidationError(
-        'Invalid product customisation selection.'
-      );
+      throw new ValidationError('Invalid product customisation selection.');
     }
 
     if (seenOptions.has(optionId)) {
@@ -89,8 +78,7 @@ async function validateSelectedOptions(
          pov.id AS value_id,
          pov.name AS value_name
        FROM product_options po
-       JOIN product_option_values pov
-         ON pov.option_id = po.id
+       JOIN product_option_values pov ON pov.option_id = po.id
        WHERE po.id = $1
          AND pov.id = $2
          AND po.product_id = $3
@@ -121,15 +109,11 @@ async function validateSelectedOptions(
 
 export async function validateOrderItems(client, items) {
   if (!Array.isArray(items) || items.length === 0) {
-    throw new ValidationError(
-      'Your order must contain at least one product.'
-    );
+    throw new ValidationError('Your order must contain at least one product.');
   }
 
   if (items.length > 50) {
-    throw new ValidationError(
-      'An order cannot contain more than 50 items.'
-    );
+    throw new ValidationError('An order cannot contain more than 50 items.');
   }
 
   const validatedItems = [];
@@ -144,15 +128,10 @@ export async function validateOrderItems(client, items) {
     } = item || {};
 
     if (!isValidId(productId)) {
-      throw new ValidationError(
-        'An order contains an invalid product.'
-      );
+      throw new ValidationError('An order contains an invalid product.');
     }
 
-    if (
-      variationId !== null &&
-      !isValidId(variationId)
-    ) {
+    if (variationId !== null && !isValidId(variationId)) {
       throw new ValidationError(
         'An order contains an invalid product variation.'
       );
@@ -194,7 +173,6 @@ export async function validateOrderItems(client, items) {
     }
 
     const product = productResult.rows[0];
-
     let variation = null;
 
     if (variationId) {
@@ -217,25 +195,17 @@ export async function validateOrderItems(client, items) {
       variation = variationResult.rows[0];
     }
 
-    let unitPriceKobo;
+    // Main product price is the default. A variation overrides it only
+    // when the user explicitly selects a valid active variation.
+    const priceToUse = variation ? variation.price : product.base_price;
 
-    if (product.has_variable_pricing) {
-      if (!variation) {
-        throw new ValidationError(
-          `Please select a variation for "${product.name}".`
-        );
-      }
-
-      unitPriceKobo = parseMoneyToKobo(variation.price);
-    } else {
-      if (product.base_price === null) {
-        throw new ValidationError(
-          `A base price has not been configured for "${product.name}".`
-        );
-      }
-
-      unitPriceKobo = parseMoneyToKobo(product.base_price);
+    if (priceToUse === null || priceToUse === undefined) {
+      throw new ValidationError(
+        `A main product price has not been configured for "${product.name}".`
+      );
     }
+
+    const unitPriceKobo = parseMoneyToKobo(priceToUse);
 
     const validatedOptions = await validateSelectedOptions(
       client,
@@ -254,9 +224,7 @@ export async function validateOrderItems(client, items) {
     orderTotalKobo += lineTotalKobo;
 
     if (orderTotalKobo > MAX_MONEY_KOBO) {
-      throw new ValidationError(
-        'The order total exceeds the allowed limit.'
-      );
+      throw new ValidationError('The order total exceeds the allowed limit.');
     }
 
     validatedItems.push({

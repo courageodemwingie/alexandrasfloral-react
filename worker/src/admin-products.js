@@ -349,7 +349,17 @@ function validateProductBody(body, existing = null) {
           throw new ValidationError('Invalid product variations.');
         }
 
-        return body.variations.map(validateVariation);
+        
+return body.variations.map((variation, index) =>
+  validateVariation(
+    {
+      ...variation,
+      price: hasVariablePricing ? variation.price : basePrice,
+    },
+    index,
+  ),
+);
+
       })()
     : undefined;
 

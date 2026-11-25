@@ -23,6 +23,11 @@ import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminProducts from "./pages/admin/AdminProducts.jsx";
 import AdminProductForm from "./pages/admin/AdminProductForm.jsx";
 
+// Admin order pages
+import Orders from "./pages/orders/Orders.jsx";
+import CreateOrder from "./pages/orders/CreateOrder.jsx";
+import OrderDetails from "./pages/orders/OrderDetails.jsx";
+
 // Admin authentication and context
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
@@ -69,11 +74,21 @@ function AppLayout() {
         <Route element={<AdminProtectedRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+
+            {/* Products */}
             <Route path="products" element={<AdminProducts />} />
             <Route path="products/new" element={<AdminProductForm />} />
             <Route
               path="products/:productId"
               element={<AdminProductForm />}
+            />
+
+            {/* Orders */}
+            <Route path="orders" element={<Orders />} />
+            <Route path="orders/new" element={<CreateOrder />} />
+            <Route
+              path="orders/:orderId"
+              element={<OrderDetails />}
             />
           </Route>
         </Route>

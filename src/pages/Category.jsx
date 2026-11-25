@@ -1,15 +1,58 @@
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getCategoryBySlug, getProductsByCategory } from '../data/products.js'
+import {
+  getPublicCategories,
+  getPublicProducts,
+} from '../services/api.js'
 import ProductCard from '../components/shop/ProductCard.jsx'
 import '../styles/shop.css'
 
 function Category() {
   const { categorySlug } = useParams()
 
-  const category = getCategoryBySlug(categorySlug)
-  const categoryProducts = getProductsByCategory(categorySlug)
+  const [category, setCategory] = useState(null)
+  const [categoryProducts, setCategoryProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadCategory() {
+      try {
+        setIsLoading(true)
+        setError('')
+
+        const [categoriesData, productsData] = await Promise.all([
+          getPublicCategories(),
+          getPublicProducts({ category: categorySlug }),
+        ])
+
+        if (!isMounted) return
+
+        const matchedCategory = (categoriesData.categories || []).find(
+          (item) => item.slug === categorySlug
+        )
+
+        setCategory(matchedCategory || null)
+        setCategoryProducts(productsData.products || [])
+      } catch (err) {
+        if (!isMounted) return
+        setError(err.message || 'Unable to load this collection.')
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadCategory()
+
+    return () => {
+      isMounted = false
+    }
+  }, [categorySlug])
 
   const productRows = useMemo(() => {
     const rows = []
@@ -20,6 +63,28 @@ function Category() {
 
     return rows
   }, [categoryProducts])
+
+  if (isLoading) {
+    return (
+      <main className="shop-page">
+        <div className="shop-empty-state">
+          <p>Loading this collection...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main className="shop-page">
+        <div className="shop-empty-state">
+          <h2>Unable to load this collection</h2>
+          <p>{error}</p>
+          <Link to="/shop">Return to shop</Link>
+        </div>
+      </main>
+    )
+  }
 
   if (!category) {
     return (
@@ -44,7 +109,7 @@ function Category() {
       <section className="category-intro">
         <p className="shop-eyebrow">EXPLORE THE COLLECTION</p>
         <h1>{category.name}</h1>
-        <p>{category.description}</p>
+        <p>{category.description || ''}</p>
       </section>
 
       <section className="shop-products">
