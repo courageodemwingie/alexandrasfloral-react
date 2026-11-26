@@ -1,7 +1,9 @@
+
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import html2canvas from 'html2canvas'
 import { useCart } from '../context/CartContext.jsx'
+import { getProductImageUrl } from '../services/api.js'
 import logo from '../assets/logo/alexandras_floral_logo.webp'
 import '../styles/checkout.css'
 
@@ -15,19 +17,19 @@ function formatPrice(amount) {
 
 function getSelectedVariation(item) {
   return item.product.variations?.find(
-    variation => variation.id === item.variation
+    (variation) => variation.id === item.variation
   ) || null
 }
 
 function getProductImage(item) {
   const variation = getSelectedVariation(item)
 
-  return (
-    variation?.image ||
-    item.product.image ||
-    item.product.variations?.[0]?.image ||
-    ''
-  )
+  const imageKey =
+    variation?.image_key ||
+    item.product.main_image_key ||
+    item.product.variations?.[0]?.image_key
+
+  return getProductImageUrl(imageKey)
 }
 
 function formatDeliveryDate(date) {
@@ -79,7 +81,7 @@ export default function Checkout() {
   function handleChange(event) {
     const { name, value } = event.target
 
-    setCustomer(current => ({
+    setCustomer((current) => ({
       ...current,
       [name]: value,
     }))
@@ -130,12 +132,12 @@ export default function Checkout() {
       )
 
       await Promise.all(
-        images.map(image => {
+        images.map((image) => {
           if (image.complete && image.naturalWidth > 0) {
             return Promise.resolve()
           }
 
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             image.onload = resolve
             image.onerror = resolve
           })
@@ -166,7 +168,6 @@ export default function Checkout() {
     }
   }
 
-  // EMPTY CART
   if (cartItems.length === 0) {
     return (
       <main className="checkout-page">
@@ -186,7 +187,6 @@ export default function Checkout() {
     )
   }
 
-  // ORDER REQUEST READY
   if (order) {
     return (
       <main className="checkout-page">
@@ -227,6 +227,7 @@ export default function Checkout() {
 
             <section className="order-document-section order-document-customer">
               <h2>Customer and Delivery Information</h2>
+
               <div className="order-document-customer-grid">
                 <p><strong>Customer:</strong> {order.customer.name}</p>
                 <p><strong>Receiver's phone:</strong> {order.customer.phone}</p>
@@ -244,7 +245,7 @@ export default function Checkout() {
               <h2>Requested Products</h2>
 
               <div className="order-document-items">
-                {order.items.map(item => {
+                {order.items.map((item) => {
                   const variation = getSelectedVariation(item)
                   const image = getProductImage(item)
                   const unitPrice = item.product.price
@@ -270,6 +271,7 @@ export default function Checkout() {
                         <p className="order-document-variation">
                           {variation?.name || 'Standard'} <span>·</span> Qty {item.quantity}
                         </p>
+
                         <p className="order-document-prices">
                           Unit {formatPrice(unitPrice)} <span>·</span>{' '}
                           <strong>Subtotal {formatPrice(lineTotal)}</strong>
@@ -327,7 +329,6 @@ export default function Checkout() {
     )
   }
 
-  // CHECKOUT FORM
   return (
     <main className="checkout-page">
       <div className="checkout-container">
@@ -440,7 +441,7 @@ export default function Checkout() {
             <h2>Order Summary</h2>
 
             <div className="checkout-items">
-              {cartItems.map(item => {
+              {cartItems.map((item) => {
                 const variation = getSelectedVariation(item)
                 const image = getProductImage(item)
 

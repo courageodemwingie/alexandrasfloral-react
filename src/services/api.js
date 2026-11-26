@@ -1,5 +1,9 @@
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'
+
+const IMAGE_BASE_URL =
+  import.meta.env.VITE_IMAGE_BASE_URL || API_BASE_URL
 
 async function request(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -71,13 +75,13 @@ export const getAdminOrders = (params = {}) => {
   const query = new URLSearchParams(params).toString()
   return request(`/api/admin/orders${query ? `?${query}` : ''}`)
 }
-// Create a new official order
+
 export const createAdminOrder = (orderData) =>
   request('/api/admin/orders', {
     method: 'POST',
     body: JSON.stringify(orderData),
   })
-  
+
 export const getAdminOrder = (id) =>
   request(`/api/admin/orders/${encodeURIComponent(id)}`)
 
@@ -126,10 +130,11 @@ export async function uploadAdminImage(file) {
   return data
 }
 
+// Product images: use the configured image server
 export function getProductImageUrl(imageKey) {
   if (!imageKey) return ''
 
-  return `${API_BASE_URL}/api/images?key=${encodeURIComponent(imageKey)}`
+  return `${IMAGE_BASE_URL}/api/images?key=${encodeURIComponent(imageKey)}`
 }
 
 // Public shop catalogue
@@ -138,7 +143,6 @@ export const getPublicCategories = () =>
 
 export const getPublicProducts = (params = {}) => {
   const query = new URLSearchParams(params).toString()
-
   return request(`/api/products${query ? `?${query}` : ''}`)
 }
 

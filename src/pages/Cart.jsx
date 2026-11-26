@@ -1,7 +1,21 @@
 
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
+import { getProductImageUrl } from '../services/api.js'
 import '../styles/cart.css'
+
+function getCartItemImage(item) {
+  const variation = item.product.variations?.find(
+    (option) => option.id === item.variation
+  )
+
+  const imageKey =
+    variation?.image_key ||
+    item.product.main_image_key ||
+    item.product.variations?.[0]?.image_key
+
+  return getProductImageUrl(imageKey)
+}
 
 function Cart() {
   const {
@@ -31,7 +45,9 @@ function Cart() {
       <div className="cart-container">
         <div className="cart-heading">
           <h1>Your Shopping Cart</h1>
-          <p>{cartCount} {cartCount === 1 ? 'item' : 'items'} in your cart</p>
+          <p>
+            {cartCount} {cartCount === 1 ? 'item' : 'items'} in your cart
+          </p>
         </div>
 
         <div className="cart-layout">
@@ -41,21 +57,20 @@ function Cart() {
                 (option) => option.id === item.variation
               )
 
-              const productImage =
-                variation?.image ||
-                item.product.image ||
-                item.product.variations?.[0]?.image
+              const productImage = getCartItemImage(item)
 
               return (
                 <article
                   className="cart-item"
                   key={`${item.product.id}-${item.variation || 'default'}`}
                 >
-                  <img
-                    className="cart-item-image"
-                    src={productImage}
-                    alt={item.product.name}
-                  />
+                  {productImage && (
+                    <img
+                      className="cart-item-image"
+                      src={productImage}
+                      alt={item.product.name}
+                    />
+                  )}
 
                   <div className="cart-item-details">
                     <h2>{item.product.name}</h2>
@@ -108,10 +123,7 @@ function Cart() {
                         type="button"
                         className="cart-remove"
                         onClick={() =>
-                          removeFromCart(
-                            item.product.id,
-                            item.variation
-                          )
+                          removeFromCart(item.product.id, item.variation)
                         }
                       >
                         Remove
@@ -120,7 +132,9 @@ function Cart() {
                   </div>
 
                   <p className="cart-item-total">
-                    ₦{(item.product.price * item.quantity).toLocaleString('en-NG')}
+                    ₦{(
+                      item.product.price * item.quantity
+                    ).toLocaleString('en-NG')}
                   </p>
                 </article>
               )
@@ -146,10 +160,7 @@ function Cart() {
               charges and the final price after reviewing your order request.
             </p>
 
-            <Link
-              to="/checkout"
-              className="cart-checkout-button"
-            >
+            <Link to="/checkout" className="cart-checkout-button">
               Proceed to Checkout
             </Link>
 
