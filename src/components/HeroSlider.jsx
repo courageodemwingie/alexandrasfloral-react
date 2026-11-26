@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './HeroSlider.css'
 
 import floralImage from '../assets/hero/large-floral-arrangement.webp'
@@ -15,6 +16,7 @@ const slides = [
       'Flowers for birthdays, milestones, special occasions, and everything in between.',
     image: floralImage,
     alt: 'Beautiful large floral arrangement',
+    shopLink: '/shop',
   },
   {
     id: 2,
@@ -24,6 +26,7 @@ const slides = [
       'Elegant floral arrangements created to complement your bridal dress.',
     image: bridalImage,
     alt: 'Elegant bridal floral arrangement',
+    shopLink: '/bridal-lookbook',
   },
   {
     id: 3,
@@ -33,6 +36,7 @@ const slides = [
       'Plants and landscape arrangements that add life and character to your space.',
     image: plantsImage,
     alt: 'Decorative plants and floral arrangement',
+    shopLink: '/shop/plants',
   },
 ]
 
@@ -41,10 +45,10 @@ function HeroSlider() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((previousSlide) => (
+      setCurrentSlide((previousSlide) =>
         (previousSlide + 1) % slides.length
-      ))
-    }, 5000)
+      )
+    }, 10000)
 
     return () => clearInterval(interval)
   }, [])
@@ -53,20 +57,11 @@ function HeroSlider() {
     setCurrentSlide(index)
   }
 
-  const goToPrevious = () => {
-    setCurrentSlide((previousSlide) =>
-      (previousSlide - 1 + slides.length) % slides.length
-    )
-  }
-
-  const goToNext = () => {
-    setCurrentSlide((previousSlide) =>
-      (previousSlide + 1) % slides.length
-    )
-  }
-
   return (
-    <section className="hero-slider" aria-label="Featured floral collections">
+    <section
+      className="hero-slider"
+      aria-label="Featured floral collections"
+    >
       <div className="hero-slides">
         {slides.map((slide, index) => (
           <article
@@ -83,42 +78,45 @@ function HeroSlider() {
             <div className="hero-overlay" />
 
             <div className="hero-content">
-              <span className="hero-category">{slide.category}</span>
+              <span className="hero-category">
+                {slide.category}
+              </span>
 
               <h1>{slide.title}</h1>
 
               <p>{slide.description}</p>
 
               <div className="hero-actions">
-                <a href="/contact" className="hero-button hero-button-primary">
-                  Order Now
-                </a>
-
-                <a href="/shop" className="hero-button hero-button-secondary">
-                  Explore
-                </a>
+                <Link
+                  to={slide.shopLink}
+                  className="hero-button hero-button-primary"
+                >
+                  SHOP NOW
+                </Link>
               </div>
             </div>
           </article>
         ))}
       </div>
 
-      
-<div className="hero-controls">
-  <div className="hero-indicators">
-    {slides.map((slide, index) => (
-      <button
-        key={slide.id}
-        type="button"
-        className={`hero-indicator ${index === currentSlide ? 'active' : ''}`}
-        onClick={() => goToSlide(index)}
-        aria-label={`Go to slide ${index + 1}`}
-        aria-current={index === currentSlide ? 'true' : undefined}
-      />
-    ))}
-  </div>
-</div>
-
+      <div className="hero-controls">
+        <div className="hero-indicators">
+          {slides.map((slide, index) => (
+            <button
+              key={slide.id}
+              type="button"
+              className={`hero-indicator ${
+                index === currentSlide ? 'active' : ''
+              }`}
+              onClick={() => goToSlide(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={
+                index === currentSlide ? 'true' : undefined
+              }
+            />
+          ))}
+        </div>
+      </div>
     </section>
   )
 }

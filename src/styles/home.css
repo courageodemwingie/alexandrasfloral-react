@@ -1,9 +1,16 @@
-/* Homepage */
+
+/* =========================================
+   HOMEPAGE
+========================================= */
+
 .homepage {
   width: 100%;
 }
 
-/* Top Picks showcase */
+/* =========================================
+   TOP PICKS
+========================================= */
+
 .home-favourites {
   width: min(1280px, calc(100% - 64px));
   margin: 0 auto;
@@ -48,8 +55,153 @@
   text-align: center;
 }
 
-/* Mobile: horizontal swipe row with the next product peeking in */
+/* =========================================
+   HOMEPAGE PROMOTIONAL BANNER
+========================================= */
+
+.home-promotion {
+  width: 100%;
+  padding: 20px 0 85px;
+  background: #fff;
+}
+
+.home-promotion-inner {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  align-items: stretch;
+  gap: 20px;
+  width: min(1150px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.home-promotion-flyer,
+.home-promotion-photo {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.home-promotion-flyer {
+  aspect-ratio: 2 / 1;
+  cursor: pointer;
+}
+
+.home-promotion-photo {
+  aspect-ratio: 1 / 1;
+}
+
+.home-promotion-flyer img,
+.home-promotion-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-promotion-flyer img {
+  transition: transform 0.4s ease;
+}
+
+.home-promotion-flyer:hover img {
+  transform: scale(1.025);
+}
+
+.home-promotion-flyer:focus-visible {
+  outline: 2px solid #762B3D;
+  outline-offset: 5px;
+}
+
+/* =========================================
+   CUSTOMER LOVE
+========================================= */
+
+.customer-love {
+  width: 100%;
+  padding: 85px 0 100px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.customer-love-heading {
+  max-width: 850px;
+  margin: 0 auto 58px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.customer-love-eyebrow {
+  display: block;
+  margin-bottom: 20px;
+  color: #9A7650;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.7px;
+}
+
+.customer-love-heading h2 {
+  margin: 0;
+  color: #762B3D;
+  font-family: 'Bodoni Moda', 'Bodoni MT', Georgia, serif;
+  font-size: clamp(44px, 5.5vw, 70px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+}
+
+/* =========================================
+   CUSTOMER REVIEW GALLERY — DESKTOP
+========================================= */
+
+.customer-love-gallery {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "review-two review-one review-four"
+    "review-three review-one review-five";
+  align-items: center;
+  gap: 26px 34px;
+  width: min(1120px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.customer-review-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 13px;
+}
+
+.review-one {
+  grid-area: review-one;
+  align-self: center;
+  max-height: 650px;
+}
+
+.review-two {
+  grid-area: review-two;
+}
+
+.review-three {
+  grid-area: review-three;
+}
+
+.review-four {
+  grid-area: review-four;
+}
+
+.review-five {
+  grid-area: review-five;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 768px) {
+  /* Top Picks */
   .home-favourites {
     width: 100%;
     padding: 52px 0 62px;
@@ -91,7 +243,85 @@
     margin-bottom: 8px;
     font-size: 9px;
   }
+
+  /* Promotional images */
+  .home-promotion {
+    padding: 12px 0 65px;
+  }
+
+  .home-promotion-inner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    width: calc(100% - 32px);
+  }
+
+  .home-promotion-flyer {
+    aspect-ratio: 1.95 / 1;
+  }
+
+  .home-promotion-photo {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Customer reviews */
+  .customer-love {
+    padding: 65px 0 75px;
+  }
+
+  .customer-love-heading {
+    margin-bottom: 35px;
+  }
+
+  .customer-love-heading h2 {
+    font-size: clamp(39px, 10vw, 52px);
+  }
+
+  .customer-love-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .customer-review-image {
+    display: block;
+    width: 82%;
+    max-width: 420px;
+    height: auto;
+    max-height: none;
+    margin: 0 auto;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+
+  .review-one {
+    order: 1;
+    width: 82%;
+    margin-bottom: 6px;
+  }
+
+  .review-two {
+    order: 2;
+  }
+
+  .review-three {
+    order: 3;
+  }
+
+  .review-four {
+    order: 4;
+  }
+
+  .review-five {
+    order: 5;
+  }
 }
+
+/* =========================================
+   SMALL MOBILE SCREENS
+========================================= */
 
 @media (max-width: 380px) {
   .home-favourites {
@@ -109,5 +339,18 @@
     flex-basis: 76vw;
     width: 76vw;
     min-width: 76vw;
+  }
+
+  .home-promotion-inner {
+    width: calc(100% - 24px);
+    gap: 10px;
+  }
+
+  .customer-love-gallery {
+    gap: 20px;
+  }
+
+  .customer-review-image {
+    width: 86%;
   }
 }

@@ -1,0 +1,203 @@
+
+/* Featured Journal section on homepage */
+
+.home-journal {
+  padding: 85px 0 95px;
+  background: #f7f2ef;
+  color: #403b39;
+}
+
+.home-journal-container {
+  width: min(1160px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.home-journal-heading {
+  max-width: 720px;
+  margin: 0 auto 42px;
+  text-align: center;
+}
+
+.home-journal-eyebrow {
+  color: #b58a4b;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .23em;
+}
+
+.home-journal-heading h2 {
+  margin: 13px 0 10px;
+  color: #6b1f32;
+  font-family: var(--heading-font, Georgia, serif);
+  font-size: clamp(32px, 4vw, 45px);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.home-journal-heading p {
+  margin: 0;
+  color: #77716e;
+  font-family: var(--heading-font, Georgia, serif);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.home-journal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.home-journal-card {
+  min-width: 0;
+  background: #fbf8f5;
+}
+
+.home-journal-image {
+  display: block;
+  aspect-ratio: 1.65;
+  overflow: hidden;
+  background: #eadbd5;
+}
+
+.home-journal-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .55s ease;
+}
+
+.home-journal-card:hover .home-journal-image img {
+  transform: scale(1.035);
+}
+
+.home-journal-card-content {
+  padding: 23px 25px 27px;
+}
+
+.home-journal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 15px;
+  color: #a27b48;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .13em;
+}
+
+.home-journal-card h3 {
+  margin: 13px 0 10px;
+  color: #6b1f32;
+  font-family: var(--heading-font, Georgia, serif);
+  font-size: clamp(22px, 2.5vw, 29px);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.home-journal-card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-journal-card h3 a:hover {
+  color: #a27b48;
+}
+
+.home-journal-card-content > p {
+  margin: 0 0 20px;
+  color: #77716e;
+  font-family: var(--heading-font, Georgia, serif);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.home-journal-read-link,
+.home-journal-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #6b1f32;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.home-journal-read-link {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #6b1f32;
+}
+
+.home-journal-read-link span,
+.home-journal-all-link span {
+  font-size: 17px;
+  transition: transform .2s ease;
+}
+
+.home-journal-read-link:hover span,
+.home-journal-all-link:hover span {
+  transform: translateX(4px);
+}
+
+.home-journal-footer {
+  margin-top: 38px;
+  text-align: center;
+}
+
+.home-journal-all-link {
+  padding: 13px 22px;
+  border: 1px solid #6b1f32;
+  transition: background .2s ease, color .2s ease;
+}
+
+.home-journal-all-link:hover {
+  background: #6b1f32;
+  color: #fff;
+}
+
+@media (max-width: 700px) {
+  .home-journal {
+    padding: 58px 0 65px;
+  }
+
+  .home-journal-container {
+    width: calc(100% - 36px);
+  }
+
+  .home-journal-heading {
+    margin-bottom: 28px;
+  }
+
+  .home-journal-heading h2 {
+    font-size: 32px;
+  }
+
+  .home-journal-heading p {
+    font-size: 14px;
+  }
+
+  .home-journal-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .home-journal-image {
+    aspect-ratio: 1.5;
+  }
+
+  .home-journal-card-content {
+    padding: 19px 20px 23px;
+  }
+
+  .home-journal-card h3 {
+    font-size: 25px;
+  }
+
+  .home-journal-footer {
+    margin-top: 30px;
+  }
+}

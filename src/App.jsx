@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import AnnouncementBar from "./components/AnnouncementBar.jsx";
@@ -13,6 +12,7 @@ import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import BridalLookbook from "./pages/BridalLookbook.jsx";
 import FAQ from "./pages/FAQ.jsx";
+import About from "./pages/About.jsx";
 
 // Admin pages
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
@@ -32,6 +32,10 @@ import OrderDetails from "./pages/orders/OrderDetails.jsx";
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { AdminAuthProvider } from "./context/AdminAuthContext.jsx";
+
+import Journal from "./pages/Journal.jsx";
+import JournalCategory from "./pages/JournalCategory.jsx";
+import JournalArticle from "./pages/JournalArticle.jsx";
 
 function AppLayout() {
   const location = useLocation();
@@ -58,6 +62,13 @@ function AppLayout() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/bridal-lookbook" element={<BridalLookbook />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route
+          path="/journal/category/:categorySlug"
+          element={<JournalCategory />}
+        />
+        <Route path="/journal/:slug" element={<JournalArticle />} />
 
         {/* Admin authentication */}
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -65,10 +76,7 @@ function AppLayout() {
           path="/admin/forgot-password"
           element={<AdminForgotPassword />}
         />
-        <Route
-          path="/admin/reset-password"
-          element={<AdminResetPassword />}
-        />
+        <Route path="/admin/reset-password" element={<AdminResetPassword />} />
 
         {/* Protected admin pages */}
         <Route element={<AdminProtectedRoute />}>
@@ -78,18 +86,12 @@ function AppLayout() {
             {/* Products */}
             <Route path="products" element={<AdminProducts />} />
             <Route path="products/new" element={<AdminProductForm />} />
-            <Route
-              path="products/:productId"
-              element={<AdminProductForm />}
-            />
+            <Route path="products/:productId" element={<AdminProductForm />} />
 
             {/* Orders */}
             <Route path="orders" element={<Orders />} />
             <Route path="orders/new" element={<CreateOrder />} />
-            <Route
-              path="orders/:orderId"
-              element={<OrderDetails />}
-            />
+            <Route path="orders/:orderId" element={<OrderDetails />} />
           </Route>
         </Route>
       </Routes>
