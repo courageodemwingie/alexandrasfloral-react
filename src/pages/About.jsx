@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom'
 import '../styles/about.css'
 
 const floralImages = {
@@ -21,13 +22,9 @@ function About() {
       {/* HERO SECTION */}
       <section className="about-hero">
         <div className="about-hero-copy">
-          <span className="about-eyebrow">
-            WHY WE EXIST
-          </span>
+          <span className="about-eyebrow">WHY WE EXIST</span>
 
-          <h1>
-            Flowers should feel like part of life.
-          </h1>
+          <h1>Flowers should feel like part of life.</h1>
 
           <p>
             We believe flowers should be more than something
@@ -36,9 +33,9 @@ function About() {
             day or make a meaningful moment even more memorable.
           </p>
 
-          <a href="/shop" className="about-text-link">
+          <Link to="/shop" className="about-text-link">
             EXPLORE OUR COLLECTION <span>↗</span>
-          </a>
+          </Link>
         </div>
 
         <div className="about-hero-image">
@@ -59,13 +56,9 @@ function About() {
       {/* OUR BELIEF */}
       <section className="about-belief">
         <div className="about-belief-copy">
-          <span className="about-eyebrow">
-            FOR EVERY MOMENT
-          </span>
+          <span className="about-eyebrow">FOR EVERY MOMENT</span>
 
-          <h2>
-            Not every bouquet needs a big occasion.
-          </h2>
+          <h2>Not every bouquet needs a big occasion.</h2>
 
           <p>
             Sometimes, the most memorable gestures are the
@@ -95,9 +88,7 @@ function About() {
             A LITTLE THOUGHT GOES A LONG WAY
           </span>
 
-          <h2>
-            Beautifully considered. Thoughtfully arranged.
-          </h2>
+          <h2>Beautifully considered. Thoughtfully arranged.</h2>
 
           <p>
             We believe that the beauty of flowers lies in the
@@ -116,9 +107,7 @@ function About() {
               decoding="async"
             />
 
-            <figcaption>
-              Beauty in every detail.
-            </figcaption>
+            <figcaption>Beauty in every detail.</figcaption>
           </figure>
 
           <figure className="about-gallery-small">
@@ -129,9 +118,7 @@ function About() {
               decoding="async"
             />
 
-            <figcaption>
-              Flowers for every expression.
-            </figcaption>
+            <figcaption>Flowers for every expression.</figcaption>
           </figure>
         </div>
       </section>
@@ -142,9 +129,7 @@ function About() {
           THE ALEXANDRA'S FLORAL EXPERIENCE
         </span>
 
-        <h2>
-          Beautiful flowers shouldn't feel out of reach.
-        </h2>
+        <h2>Beautiful flowers shouldn't feel out of reach.</h2>
 
         <p>
           Whether you're choosing a bouquet for someone special,
@@ -161,14 +146,12 @@ function About() {
             SOMETHING BEAUTIFUL AWAITS
           </span>
 
-          <h2>
-            There's always a reason to send flowers.
-          </h2>
+          <h2>There's always a reason to send flowers.</h2>
         </div>
 
-        <a href="/shop" className="about-cta-button">
+        <Link to="/shop" className="about-cta-button">
           FIND YOUR FLOWERS <span>↗</span>
-        </a>
+        </Link>
       </section>
 
     </main>
