@@ -2,6 +2,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://alexandrasfloral-api.courage02911.workers.dev/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }
